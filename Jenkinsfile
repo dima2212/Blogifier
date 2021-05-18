@@ -14,8 +14,8 @@ pipeline {
         }
         stage("Push"){
             steps{
-                sh "docker login localhost:8081 --username admin --password 338239"
-                sh "docker push localhost:8081/blogifier:default "
+                sh "docker login localhost:8082 --username admin --password 338239"
+                sh "docker push localhost:8082/blogifier:default "
             }
         }
     }
