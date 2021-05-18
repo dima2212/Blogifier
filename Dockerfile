@@ -18,7 +18,7 @@ WORKDIR /opt/blogifier
 
 RUN dotnet restore -v m
 RUN dotnet build -c --no-restore -c Release --nologo
-RUN dotnet publish -c Release -o out ./src/Blogifier/Blogifier.csproj
+RUN dotnet publish -c Release -o outputs ./src/Blogifier/Blogifier.csproj
 
 RUN coverlet ./tests/Blogifier.Tests/bin/Release/net5.0/Blogifier.Tests.dll \
     --target "dotnet" --targetargs "test -c Release --no-build" --format opencover
