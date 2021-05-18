@@ -9,13 +9,13 @@ pipeline {
         }
         stage("DockerBuild"){
             steps{
-                sh "docker build --network=host -t localhost:8082/blogifier:Blogifier -f Dockerfile ."
+                sh "docker build --network=host -t localhost:8082/blogifier:default -f Dockerfile ."
             }
         }
         stage("Push"){
             steps{
                 sh "docker login localhost:8082 --username admin --password 338239"
-                sh "docker push localhost:8082/blogifier:Blogifier "
+                sh "docker push localhost:8082/blogifier:default "
             }
         }
     }
