@@ -9,7 +9,6 @@ pipeline {
         }
         stage("DockerBuild"){
             steps{
-                sh "apt-get install docker.io"
                 sh "docker build --network=host -t localhost:8081/blogifier:myapp -f Dockerfile ."
             }
         }
