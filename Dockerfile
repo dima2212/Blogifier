@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:5.0-alpine as base
 WORKDIR /opt/blogifier
 ENV PATH="$PATH:/root/.dotnet/tools"
-RUN apk update && apk add openjdk-11-jdk && \
+RUN apk update && apk add openjdk11 && \
     dotnet tool install --global dotnet-sonarscanner && \
     dotnet tool install --global coverlet.console --version 1.7.1
 
