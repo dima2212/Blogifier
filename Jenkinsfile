@@ -9,7 +9,7 @@ pipeline {
         }
         stage("DockerBuild"){
             steps{
-                sh "docker build --network=host -t localhost:8083/blogifier:default -f Dockerfile ."
+                sh "docker build --network=host -t localhost:8082/blogifier:default -f Dockerfile ."
             }
         }
         stage("Push"){
