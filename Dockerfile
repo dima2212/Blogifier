@@ -29,7 +29,7 @@ RUN coverlet /app/blogifier/tests/Blogifier.Tests/bin/Debug/net5.0/Blogifier.Tes
 RUN dotnet sonarscanner end /d:sonar.login="7f6e0b8e257464ddb7f578d8d9fc883bb311da55"
 
 FROM mcr.microsoft.com/dotnet/aspnet:5.0 as run
-COPY --from=build-env /app/blogifier/outputs /app/blogifier/outputs
+COPY --from=base /app/blogifier/outputs /app/blogifier/outputs
 WORKDIR /app/blogifier/outputs
 ENTRYPOINT ["dotnet", "Blogifier.dll"]
 
