@@ -25,11 +25,11 @@ RUN coverlet ./tests/Blogifier.Tests/bin/Release/net5.0/Blogifier.Tests.dll \
 
 RUN dotnet sonarscanner end /d:sonar.login="82eb2340e9928dfb9c3c39abb964a6620831df8e"
 
-#RUN ["dotnet","publish","./src/Blogifier/Blogifier.csproj","-o","./outputs" ]
+RUN ["dotnet","publish","./src/Blogifier/Blogifier.csproj","-o","./outputs" ]
 
 # Build Runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:5.0-alpine 
-WORKDIR /opt/blogifier
-COPY --from=base /opt/blogifier/outputs . 
+FROM mcr.microsoft.com/dotnet/aspnet:5.0-alpine as run
+COPY --from=base /opt/blogifier/outputs /opt/blogifier/outputs 
+WORKDIR /opt/blogifier/outputs
 ENTRYPOINT ["dotnet", "Blogifier.dll"]
 EXPOSE 80
