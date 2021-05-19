@@ -1,34 +1,36 @@
-FROM mcr.microsoft.com/dotnet/sdk:5.0 as base
-WORKDIR /opt/blogifier
-ENV PATH="$PATH:/root/.dotnet/tools"
+FROM mcr.microsoft.com/dotnet/sdk:5.0 as build
 
 RUN mkdir /usr/share/man/man1/
+RUN apt-get update && apt-get install -y openjdk-11-jdk
 
-RUN apt-get update && apt-get install -y openjdk-11-jdk && \
-    dotnet tool install --global dotnet-sonarscanner  && \
-    dotnet tool install --global coverlet.console 
+ENV PATH="$PATH:/root/.dotnet/tools"
+RUN dotnet tool install --global dotnet-sonarscanner && \
+    dotnet tool install --global coverlet.console
 
+# Copy source code
+COPY ./ /opt/blogifier
+WORKDIR /opt/blogifier
+
+# Running Sonar scan
 RUN dotnet sonarscanner begin \
-    /k:"blogifier" \
+    /k:"mytestapp" \
     /d:sonar.host.url="http://localhost:9000" \
-    /d:sonar.login="82eb2340e9928dfb9c3c39abb964a6620831df8e" \
-    /d:sonar.cs.opencover.reportsPath=coverage.opencover.xml
+    /d:sonar.login="4c0734f1fa2e3ac6f4e0592c6b8b2bb277549fdc" \
+    /d:sonar.cs.opencover.reportsPaths=coverage.opencover.xml
 
-# Copy everything else and build
-COPY ./ /app/blogifier
-WORKDIR /app/blogifier
-
-RUN coverlet /app/blogifier/tests/Blogifier.Tests/bin/Debug/net5.0/Blogifier.Tests.dll \ 
-    --target "dotnet" --targetargs "test --no-build" --format opencover
-RUN dotnet sonarscanner end /d:sonar.login="82eb2340e9928dfb9c3c39abb964a6620831df8e"
-
-RUN dotnet restore -v m
+RUN dotnet restore -v m 
 RUN dotnet build --no-restore --nologo
-RUN ["dotnet","publish","./src/Blogifier/Blogifier.csproj","-o","./outputs" ]
 
+RUN dotnet publish ./src/Blogifier/Blogifier.csproj -o ./outputs
+
+RUN coverlet /opt/blogifier/tests/Blogifier.Tests/bin/Debug/net5.0/Blogifier.Tests.dll --target "dotnet" --targetargs "test --no-build" --format opencover
+
+RUN dotnet sonarscanner end /d:sonar.login="4c0734f1fa2e3ac6f4e0592c6b8b2bb277549fdc"
+
+
+# Runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:5.0 as run
-COPY --from=base /app/blogifier/outputs /app/blogifier/outputs
-WORKDIR /app/blogifier/outputs
+COPY --from=build /opt/blogifier/outputs /opt/blogifier/outputs
+WORKDIR /opt/blogifier/outputs
 ENTRYPOINT ["dotnet", "Blogifier.dll"]
-
 EXPOSE 80
