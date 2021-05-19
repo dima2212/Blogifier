@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/dotnet/sdk:5.0 as base
 WORKDIR /opt/blogifier
 ENV PATH="$PATH:/root/.dotnet/tools"
 
-RUN RUN mkdir /usr/share/man/man1/
+RUN mkdir /usr/share/man/man1/
 
 RUN apt-get update && apt-get install -y openjdk-11-jdk && \
     dotnet tool install --global dotnet-sonarscanner  && \
@@ -26,7 +26,6 @@ RUN ["dotnet","publish","./src/Blogifier/Blogifier.csproj","-o","./outputs" ]
 
 RUN coverlet /app/blogifier/tests/Blogifier.Tests/bin/Debug/net5.0/Blogifier.Tests.dll \ 
     --target "dotnet" --targetargs "test --no-build" --format opencover
-
 RUN dotnet sonarscanner end /d:sonar.login="82eb2340e9928dfb9c3c39abb964a6620831df8e"
 
 FROM mcr.microsoft.com/dotnet/aspnet:5.0 as run
