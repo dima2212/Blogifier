@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/dotnet/sdk:5.0 as base
 WORKDIR /opt/blogifier
 ENV PATH="$PATH:/root/.dotnet/tools"
 
-
+RUN RUN mkdir /usr/share/man/man1/
 
 RUN apt-get update && apt-get install -y openjdk-11-jdk && \
     dotnet tool install --global dotnet-sonarscanner  && \
