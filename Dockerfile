@@ -11,11 +11,6 @@ RUN dotnet sonarscanner begin \
     /d:sonar.login="82eb2340e9928dfb9c3c39abb964a6620831df8e" \
     /d:sonar.cs.opencover.reportsPath=coverage.opencover.xml
 
-
-# Copy everything else and build
-COPY ./ /opt/blogifier
-WORKDIR /opt/blogifier
-
 RUN dotnet restore -v m
 RUN dotnet build -c --no-restore -c Release --nologo
 RUN dotnet publish -c Release -o outputs ./src/Blogifier/Blogifier.csproj
@@ -27,9 +22,12 @@ RUN dotnet sonarscanner end /d:sonar.login="82eb2340e9928dfb9c3c39abb964a6620831
 
 RUN ["dotnet","publish","./src/Blogifier/Blogifier.csproj","-o","./outputs" ]
 
-# Build Runtime image
+COPY ./ /opt/blogifier
+WORKDIR /opt/blogifier
+
+RUN ["dotnet","publish","./src/Blogifier/Blogifier.csproj","-o","./outputs" ]
+
 FROM mcr.microsoft.com/dotnet/aspnet:5.0-alpine as run
-COPY --from=base /opt/blogifier/outputs /opt/blogifier/outputs 
+COPY --from=base /opt/blogifier/outputs /opt/blogifier/outputs
 WORKDIR /opt/blogifier/outputs
 ENTRYPOINT ["dotnet", "Blogifier.dll"]
-EXPOSE 80
